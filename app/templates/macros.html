@@ -1,0 +1,40 @@
+
+  
+
+{% macro display(pitches) %}
+<div class="container-fluid">
+  <div class="row">
+    {% if pitches %}
+    {% for pitch in pitches %}
+    <div class="col-md-4">
+      <div class="card m-1 p-0">
+        <p class="card-header">Category: {{pitch.category}}</p>
+        <div class="card-body">
+          <p class="m-0 p-0"><strong>{{pitch.title}}</strong></p>
+          <p class="m-0 p-0">{{pitch.word}}</p><br>
+          <div>
+            <span class="pl-3"><a href="{{url_for('main.upvote',id = pitch.id)}}"> <img src="{{url_for('static', filename='photos/like.png')}}" alt=""
+              class="icon"></a> {{pitch.upvote.count()}}</span>
+            <span class="pl-3"><a class="text-dark" href="{{url_for('main.downvote',id = pitch.id)}}"> <img src="{{url_for('static', filename='photos/dislike.png')}}" alt=""
+              class="icon"> {{pitch.downvote.count()}}</a></span>
+            <span class="pl-4"><a href="{{url_for('main.comment',pitch_id = pitch.id)}}" class="btn btn-outline-primary btn-sm"> Comment</a></span>
+          </div><br>
+        </div>
+        <div class="card-footer text-muted">
+          <p class="text-center p-0 m-0">Posted by: {{pitch.user.username}} on {{pitch.time.strftime('%Y-%m-%d')}}</p>
+        </div>
+      </div>
+    </div>
+
+    {% endfor %}
+    {% else %}
+    <div class="card">
+      <div class="card-body">
+
+        <p class="card-title">No pitches yet</p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
