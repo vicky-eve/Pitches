@@ -1,17 +1,25 @@
 {% extends 'base.html'%}
 {% import 'bootstrap/wtf.html' as wtf%}
+{% block styles%}
+    {{ super() }}
+ 
+{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid pt-4 title">
 <div class="row">
-<div class="col-md-2"> </div>
-<div class="col-md-8">
-
-{{wtf.quick_form(registration_form)}}
-
+    <div class="col-md-2"></div>
+<div class="col-md-6 ">
+    <h3 class="title italic"><span style="font-size: 1em;  color:black"><i class="fas fa-user-plus"></i></span> Sign Up</h3>
+    <hr>
+    {{wtf.quick_form(registration_form, button_map={'submit':'outline-primary'})}}
+    <p> Have an account already? <a href="{{url_for('auth.login')}}"> Click here to login.</a></p>
 </div>
 <div class="col-md-2"></div>
 </div>
 </div>
+<footer class="fixed-bottom">
+    <p class="text-center text-white"><i>@Copyright, Pitch 2022</i></p>
+</footer>
 
 {% endblock%}

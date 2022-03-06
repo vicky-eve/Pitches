@@ -1,42 +1,62 @@
-  {% extends 'base.html'%}
+{% extends 'base.html'%}
+{% block styles%}
+{{ super() }}
 
-  {% block content %}
-  <div class="container">
-  <div class="row">
-  <!-- displaying  Username-->
-    <div class="col-md-4">
-      <h3> {{user.username| capitalize}} </h3>
+{% endblock %}
 
-      <!--Displaying user bio-->
-      {% if user.bio %}
-        <p> {{user.bio}}</p>
-      {%else%}
-        <p> {{user.username| capitalize}} has no bio </p>
-      {% endif %}
-    </div>
+{% block content %}
+<div class="container p-3">
+    <div class="row">
+        <div class="col-md-4">
+            <h5 class="title">My Profile</h5>
+            <div class="content-section">
+                <div class="media">
+                    {% if user.profile_pic_path %}
 
-    <!--Display profile photo-->
-    <div class="col-md-4">
-        {% if user.profile_pic_path %}
-    
-        <img src="{{url_for('static',filename=user.profile_pic_path)}}" alt="" class="img-thumbnail">
-    
-        {%else%}
-        <p>No profile picture</p>
-    
-        {% endif %}
-    
+                    <img src="{{url_for('static',filename=user.profile_pic_path)}}" alt=""
+                        class="img-thumbnail rounded-circle account-img">
+
+                    {%else%}
+                    <img src="{{url_for('static', filename='photos/default.png')}}" alt=""
+                        class="img-thumbnail rounded-circle account-img">
+                    {% endif %}
+                    <div class="media-body">
+                        <h2 class="account-heading">{{ current_user.username }}</h2>
+                        <p class="text-secondary">{{ current_user.email }}</p>
+                    </div>
+                </div>
+                {% if user.bio %}
+                <p> {{user.bio}}</p>
+                {%else%}
+                <p> {{user.username| capitalize}} has no bio </p>
+                {% endif %}
+                {% if user == current_user %}
+                <a href="{{url_for('main.update_profile',uname=user.username)}}">Click Here to Update Bio</a>
+                <form class="mt-4" action="{{url_for('main.update_pic',username=user.username)}}" method="post"
+                    enctype="multipart/form-data">
+                    <p class="title ">Update Profile photo</p>
+                    <input type="file" name="photo" class="form-control" required><br>
+                    <input type="submit" class="btn btn-sm btn-outline-primary" value="Update">
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-3"></div>
+        <div class="col-md-4">
+            <h5 class="title">My Pitches</h5>
             {% if user == current_user %}
-        <form  action="{{url_for('main.update_pic',username=user.username)}}" method="post" enctype = "multipart/form-data">
-      </div>
-          <input type="file"  name="photo" class="form-control" required>
-          <input type="submit">
-        </form>
-          {% endif %}
-          {% if user == current_user %}
-          <a href="{{url_for('main.update_profile',uname=user.username)}}">Edit profile</a>
-           {% endif %}
+            {% for post in posts%}
+            <div class="content-section">
+                <h5>{{post.title}}</h5>
+                <h6>{{post.word}}</h6>
+                <p>{{post.comment.count()}} Comments</p>
+            </div>
+            {%endfor%}
+            {% endif %}
+        </div>
     </div>
-  </div>
-  </div>
-  {% endblock %}
+</div>
+<footer class="fixed-bottom">
+    <p class="text-center text-white"><i>@Copyright, Pitch 2022</i></p>
+</footer>
+{% endblock %}
