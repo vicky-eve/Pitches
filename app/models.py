@@ -22,7 +22,7 @@ class Pitch(db.Model):
      id = db.Column(db.Integer,primary_key = True)
      title = db.Column(db.String(255))
      word = db.Column(db.Text())
-     time = db.Column(db.DateTime, default = datetime.utcnow)
+     timelapse = db.Column(db.DateTime, default = datetime.utcnow)
      category = db.Column(db.String(255), index = True)
      user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
      downvote = db.relationship('Downvote',backref = 'pitch',lazy="dynamic")

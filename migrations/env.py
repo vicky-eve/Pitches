@@ -1,6 +1,5 @@
 from __future__ import with_statement
 
-import asyncio
 import logging
 from logging.config import fileConfig
 
@@ -23,8 +22,7 @@ logger = logging.getLogger('alembic.env')
 # target_metadata = mymodel.Base.metadata
 config.set_main_option(
     'sqlalchemy.url',
-    str(current_app.extensions['migrate'].db.get_engine().url).replace(
-        '%', '%%'))
+    str(current_app.extensions['migrate'].db.engine.url).replace('%', '%%'))
 target_metadata = current_app.extensions['migrate'].db.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -54,7 +52,14 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def do_run_migrations(connection):
+def run_migrations_online():
+    """Run migrations in 'online' mode.
+
+    In this scenario we need to create an Engine
+    and associate a connection with the context.
+
+    """
+
     # this callback is used to prevent an auto-migration from being generated
     # when there are no changes to the schema
     # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html
@@ -65,32 +70,21 @@ def do_run_migrations(connection):
                 directives[:] = []
                 logger.info('No changes in schema detected.')
 
-    context.configure(
-        connection=connection,
-        target_metadata=target_metadata,
-        process_revision_directives=process_revision_directives,
-        **current_app.extensions['migrate'].configure_args
-    )
+    connectable = current_app.extensions['migrate'].db.engine
 
-    with context.begin_transaction():
-        context.run_migrations()
+    with connectable.connect() as connection:
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            process_revision_directives=process_revision_directives,
+            **current_app.extensions['migrate'].configure_args
+        )
 
-
-async def run_migrations_online():
-    """Run migrations in 'online' mode.
-
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
-
-    connectable = current_app.extensions['migrate'].db.get_engine()
-
-    async with connectable.connect() as connection:
-        await connection.run_sync(do_run_migrations)
+        with context.begin_transaction():
+            context.run_migrations()
 
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    asyncio.run(run_migrations_online())
+    run_migrations_online()
