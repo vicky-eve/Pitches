@@ -1,14 +1,23 @@
 from . import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash,check_password_hash
+from flask_login import UserMixin
+from . import login_manager
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 
-class User(db.Model):                      #connecting our class to the database to allow communication
+class User(UserMixin,db.Model):                      #connecting our class to the database to allow communication
     __tablename__ = 'users'
     id = db.Column(db.Integer,primary_key = True)
     username = db.Column(db.String(255))
     pass_secure = db.Column(db.String(255))
+    password_hash = db.Column(db.String(255))
+    email = db.Column(db.String(255),unique = True,index = True)
     downvote = db.relationship('Downvote',backref = 'user',lazy="dynamic")
     upvote= db.relationship('Upvote',backref = 'user',lazy="dynamic")
     comment= db.relationship('Comment',backref = 'user',lazy="dynamic")
@@ -26,7 +35,7 @@ class User(db.Model):                      #connecting our class to the database
     def verify_password(self,password):
         return check_password_hash(self.pass_secure,password)
 
-
+    
 
     def __repr__(self):
         return f'User {self.username}'
@@ -43,6 +52,10 @@ class Pitch(db.Model):
      upvote= db.relationship('Upvote',backref = 'pitch',lazy="dynamic")
      comment= db.relationship('Comment',backref = 'pitch',lazy="dynamic")
 
+     def save_pitch(self):
+        db.session.add(self)
+        db.session.commit()
+
      def __repr__(self):
         return f'Pitch {self.word}'
 
@@ -57,6 +70,10 @@ class Downvote(db.Model):
     pitch_id = db.Column(db.Integer,db.ForeignKey("pitches.id"))
     user_id = db.Column(db.Integer,db.ForeignKey("users.id"))
 
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
     def __repr__(self):
         return f'{self.user_id}:{self.pitch_id}'
 
@@ -69,6 +86,10 @@ class Upvote(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     pitch_id = db.Column(db.Integer,db.ForeignKey("pitches.id"))
     user_id = db.Column(db.Integer,db.ForeignKey("users.id"))
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
     def __repr__(self):
         return f'{self.user_id}:{self.pitch_id}'
