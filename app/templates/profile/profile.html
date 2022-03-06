@@ -23,6 +23,9 @@
     {%else%}
     <p>No profile picture</p>
     {% endif %}
+    {% if user == current_user %}
+    <a href="{{url_for('main.update_profile',uname=user.username)}}">Edit profile</a>
+    {% endif %}
   </div>
 </div>
 </div>
