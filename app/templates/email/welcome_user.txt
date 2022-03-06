@@ -1,0 +1,3 @@
+Hello {{user.username}}
+Welcome to Pitches!
+Welcome to the Pitches family! Where you get to make your one time pitches.
