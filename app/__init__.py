@@ -48,7 +48,7 @@ def create_app(config_name):
      # configure UploadSet
     configure_uploads(app,photos)
 
-    app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql+psycopg2://vicky:aderazi@localhost/pitches'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.ge("DATABASE_URL")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
     return app
 
