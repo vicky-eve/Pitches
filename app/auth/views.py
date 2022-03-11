@@ -6,9 +6,7 @@ from ..models import User
 from flask_login import login_user,logout_user,login_required
 from ..email import mail_message
 
-@auth.route('/login')
-def login():
-    return render_template('auth/login.html')
+
 
 @auth.route('/register',methods = ["GET","POST"])
 def register():

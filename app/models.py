@@ -9,8 +9,6 @@ from . import login_manager
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
-
 class User(UserMixin,db.Model):                      #connecting our class to the database to allow communication
     __tablename__ = 'users'
     id = db.Column(db.Integer,primary_key = True)
@@ -20,10 +18,12 @@ class User(UserMixin,db.Model):                      #connecting our class to th
     email = db.Column(db.String(255),unique = True,index = True)
     bio = db.Column(db.String(255))
     profile_pic_path = db.Column(db.String())
+    pitch= db.relationship('Pitch',backref = 'user',lazy="dynamic")
     downvote = db.relationship('Downvote',backref = 'user',lazy="dynamic")
     upvote= db.relationship('Upvote',backref = 'user',lazy="dynamic")
     comment= db.relationship('Comment',backref = 'user',lazy="dynamic")
-    pitch= db.relationship('Pitch',backref = 'user',lazy="dynamic")
+    
+    
 
     @property
     def password(self):
@@ -37,29 +37,33 @@ class User(UserMixin,db.Model):                      #connecting our class to th
     def verify_password(self,password):
         return check_password_hash(self.pass_secure,password)
 
-    
+    def save_pitch(self):
+        db.session.add(self)
+        db.session.commit()
 
     def __repr__(self):
         return f'User {self.username}'
 
 class Pitch(db.Model):
-     __tablename__ = 'pitches'
-     id = db.Column(db.Integer,primary_key = True)
-     title = db.Column(db.String(255))
-     word = db.Column(db.Text())
-     timelapse = db.Column(db.DateTime, default = datetime.utcnow)
-     category = db.Column(db.String(255), index = True)
-     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-     downvote = db.relationship('Downvote',backref = 'pitch',lazy="dynamic")
-     upvote= db.relationship('Upvote',backref = 'pitch',lazy="dynamic")
-     comment= db.relationship('Comment',backref = 'pitch',lazy="dynamic")
+    __tablename__ = 'pitches'
+    id = db.Column(db.Integer,primary_key = True)
+    title = db.Column(db.String(255))
+    word = db.Column(db.Text())
+    timelapse = db.Column(db.DateTime, default = datetime.utcnow)
+    category = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    downvote = db.relationship('Downvote',backref = 'pitch',lazy="dynamic")
+    upvote= db.relationship('Upvote',backref = 'pitch',lazy="dynamic")
+    comment= db.relationship('Comment',backref = 'pitch',lazy="dynamic")
+    
 
-     def save_pitch(self):
+    def save_pitch(self):
         db.session.add(self)
         db.session.commit()
 
-     def __repr__(self):
+    def __repr__(self):
         return f'Pitch {self.word}'
+
 
 
 
@@ -101,11 +105,15 @@ class Upvote(db.Model):
 
 
 class Comment(db.Model):
-     __tablename__ = 'comments'
-     id = db.Column(db.Integer,primary_key = True)
-     comment = db.Column(db.String (255), index=True)
-     pitch_id = db.Column(db.Integer,db.ForeignKey("pitches.id"))
-     user_id = db.Column(db.Integer,db.ForeignKey("users.id"))
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer,primary_key = True)
+    comment = db.Column(db.String (255), index=True)
+    pitch_id = db.Column(db.Integer,db.ForeignKey("pitches.id"))
+    user_id = db.Column(db.Integer,db.ForeignKey("users.id"))
 
-     def __repr__(self):
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
         return f'comment:{self.comment}'

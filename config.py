@@ -1,6 +1,6 @@
 import os 
 class Config:
-    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://vicky:aderazi@localhost/pitches'
+   
     UPLOADED_PHOTOS_DEST ='app/static/photos'
 
     #  email configurations

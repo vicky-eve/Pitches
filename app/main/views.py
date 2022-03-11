@@ -24,8 +24,9 @@ def index():
     product = Pitch.query.filter_by(category = 'Product').all() 
     project = Pitch.query.filter_by(category = 'Project').all()
     promotion = Pitch.query.filter_by(category = 'Promotion').all() 
+    all_pitches = Pitch.query.order_by(Pitch.date_posted).all()
     
-    return render_template('index.html',pitches = pitches, interview = interview,product = product,project = project, promotion = promotion)
+    return render_template('index.html',pitches = all_pitches, interview = interview,product = product,project = project, promotion = promotion)
 
 @main.route('/user/<username>/update',methods = ['GET','POST'])
 @login_required
