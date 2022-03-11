@@ -26,7 +26,7 @@ def index():
     promotion = Pitch.query.filter_by(category = 'Promotion').all() 
     all_pitches = Pitch.query.order_by(Pitch.date_posted).all()
     
-    return render_template('index.html',pitches = all_pitches, interview = interview,product = product,project = project, promotion = promotion)
+    return render_template('index.html',pitches = pitches, interview = interview,product = product,project = project, promotion = promotion)
 
 @main.route('/user/<username>/update',methods = ['GET','POST'])
 @login_required
@@ -60,17 +60,19 @@ def update_pic(username):
     return redirect(url_for('main.profile',username=username))
 
 
-@main.route('/create_new', methods = ['POST','GET'])
+@main.route('/pitch', methods = ['POST','GET'])
 @login_required
 def new_pitch():
     form = PitchForm()
     if form.validate_on_submit():
         title = form.title.data
-        post = form.post.data
+        word = form.word.data
         category = form.category.data
         
-        new_pitch = Pitch(title = title,post=post,category=category,user=current_user)
+        new_pitch = Pitch(title = title,word=word,category=category,user=current_user)
         new_pitch.save_pitch()
+        db.session.add(new_pitch)
+        db.session.commit()
         return redirect(url_for('main.index'))
         
     return render_template('pitch.html', form = form)
@@ -91,7 +93,7 @@ def comment(pitch_id):
     
     return render_template('comment.html', form =form, pitch = pitch,comments=comments)
 
-@main.route('/like/<int:id>',methods = ['POST','GET'])
+@main.route('/Upvote/<int:id>',methods = ['POST','GET'])
 @login_required
 def upvote(id):
     pitches = Upvote.get_upvotes(id)
@@ -106,7 +108,7 @@ def upvote(id):
     new_vote.save()
     return redirect(url_for('main.index',id=id))
 
-@main.route('/dislike/<int:id>',methods = ['POST','GET'])
+@main.route('/downvote/<int:id>',methods = ['POST','GET'])
 @login_required
 def downvote(id):
     pitches = Downvote.get_downvotes(id)

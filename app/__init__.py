@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from flask_uploads import UploadSet,configure_uploads,IMAGES
 from flask_mail import Mail
 from flask_simplemde import SimpleMDE
+import os 
 
 
 
@@ -27,6 +28,7 @@ simple = SimpleMDE()
 def create_app(config_name):
     app = Flask(__name__)
     app.config['UPLOADED_PHOTOS_DEST'] = 'static/photos' 
+    app.config.from_object(config_options[config_name])
     configure_uploads(app,photos)    #configure upload set
      
     #initialising the flask extensions
@@ -46,5 +48,7 @@ def create_app(config_name):
      # configure UploadSet
     configure_uploads(app,photos)
 
+    app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql+psycopg2://vicky:aderazi@localhost/pitches'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
     return app
 

@@ -1,6 +1,4 @@
 
-  
-
 {% macro display(pitches) %}
 <div class="container-fluid">
   <div class="row">
@@ -21,16 +19,12 @@
           </div><br>
         </div>
         <div class="card-footer text-muted">
-          <p class="text-center p-0 m-0">Posted by: {{pitch.user.username}} on {{pitch.time.strftime('%Y-%m-%d')}}</p>
+          <p class="text-center p-0 m-0">Posted by: {{pitch.user.username}} on {{pitch.date_posted.strftime('%Y-%m-%d')}}</p>
         </div>
-      </div>
-    </div>
-
     {% endfor %}
     {% else %}
     <div class="card">
       <div class="card-body">
-
         <p class="card-title">No pitches yet</p>
       </div>
     </div>

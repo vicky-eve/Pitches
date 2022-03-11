@@ -49,12 +49,13 @@ class Pitch(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     title = db.Column(db.String(255))
     word = db.Column(db.Text())
-    timelapse = db.Column(db.DateTime, default = datetime.utcnow)
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     category = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     downvote = db.relationship('Downvote',backref = 'pitch',lazy="dynamic")
     upvote= db.relationship('Upvote',backref = 'pitch',lazy="dynamic")
     comment= db.relationship('Comment',backref = 'pitch',lazy="dynamic")
+    
     
 
     def save_pitch(self):
